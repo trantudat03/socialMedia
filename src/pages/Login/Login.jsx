@@ -1,16 +1,23 @@
-import React, { useContext, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { TbBrandDatabricks, TbSocial } from "react-icons/tb";
 import { BsShare } from "react-icons/bs";
 import { AiOutlineInteraction } from "react-icons/ai";
 import { ImConnection } from "react-icons/im";
-import { TextInput, Loading, CustomButton } from "../components";
-import { BgImage } from "../assets";
-import axios from "axios";
-import { ShopContext } from "../Context/ShopContext";
+import { TextInput, Loading, CustomButton } from "../../components/index";
+import { BgImage } from "../../assets";
+import { LoginUser, Profile, reset } from "../../redux/authSlice";
 const Login = () => {
+  const [errMsg, setErrMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user, isLoading, isSuccess, isError } = useSelector(
+    (state) => state.auth
+  );
+
   const {
     register,
     handleSubmit,
@@ -19,35 +26,28 @@ const Login = () => {
     mode: "onChange",
   });
 
-  const { user, setUser } = useContext(ShopContext);
+  useEffect(() => {
+    dispatch(Profile());
+  }, []);
 
   const onSubmit = async (data) => {
     if (data.email && data.password) {
-      const userDoc = axios
-        .post("/login", {
-          email: data.email,
-          password: data.password,
-        })
-        .then((response) => {
-          alert("Login success");
-          // setUser(userDoc)
-          setUser(response.data);
-        })
-        .catch((e) => {
-          alert("Login fail");
-        });
+      const payload = {
+        email: data.email,
+        password: data.password,
+      };
+      dispatch(LoginUser(payload));
     } else {
       alert("Please enter all fields");
     }
   };
 
-  const [errMsg, setErrMsg] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const dispatch = useDispatch();
-
-  if (user) {
-    return <Navigate to="/" />;
-  }
+  useEffect(() => {
+    if (user && isSuccess) {
+      navigate("/");
+    }
+    dispatch(reset());
+  }, [user, isSuccess]);
 
   return (
     <div className="bg-bgColor w-full h-[100vh] flex items-center justify-center p-6">

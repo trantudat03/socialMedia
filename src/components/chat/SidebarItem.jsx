@@ -1,7 +1,7 @@
 // import { MoreVertical, ChevronLast, ChevronFirst } from "lucide-react";
 import { useContext, createContext, useState } from "react";
 
-export function SidebarItem({ icon, text, active, alert }) {
+const SidebarItem = ({ icon, text, active, alert }) => {
   return (
     <li
       className={`
@@ -35,4 +35,6 @@ export function SidebarItem({ icon, text, active, alert }) {
       }
     </li>
   );
-}
+};
+
+export default SidebarItem;

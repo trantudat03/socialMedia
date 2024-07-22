@@ -1,44 +1,53 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { user } from "../assets/data";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const initialState = {
-  user: JSON.parse(window?.localStorage.getItem("user")) ?? user,
-  edit: false,
+  user: null,
+  isError: false,
+  isSuccess: false,
+  isLoading: false,
+  message: "",
 };
 
-const userSlice = createSlice({
+export const GetUserById = createAsyncThunk(
+  "user/GetUserById",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(`/user/${id}`);
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        const message = error.response.data.msg || "loi";
+        return thunkAPI.rejectWithValue(message);
+      }
+    }
+  }
+);
+
+export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    login(state, action) {
+    reset: (state) => initialState,
+  },
+  extraReducers: (builder) => {
+    builder.addCase(GetUserById.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(GetUserById.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
       state.user = action.payload;
-      localStorage.setItem("user", JSON.stringify(action.payload));
-    },
-    logout(state) {
-      state.user = null;
-      localStorage?.removeItem("user");
-    },
-    updateProfile(state, action) {
-      state.edit = action.payload;
-    },
+    });
+    builder.addCase(GetUserById.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = true;
+      state.message = action.payload;
+    });
+
+    // Get User Login
   },
 });
+
+export const { reset } = userSlice.actions;
 export default userSlice.reducer;
-
-export function UserLogin(user) {
-  return (dispatch, getState) => {
-    dispatch(userSlice.actions.login(user));
-  };
-}
-
-export function Logout() {
-  return (dispatch, getState) => {
-    dispatch(userSlice.actions.logout());
-  };
-}
-
-export function UpdateProfile(val) {
-  return (dispatch, getState) => {
-    dispatch(userSlice.actions.updateProfile(val));
-  };
-}

@@ -2,94 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-
-::-webkit-scrollbar {
-  display: none;
-   -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;
+.body{
+    padding: 0;
+    margin: 0;
 }
 
-.topbar{
-position: sticky;
-top: 0px;
-z-index: 49;
+svg{
+    padding: 0;
 }
 
-
-.dots-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-  margin-bottom: 5px;
+/* Tùy chỉnh thanh cuộn chính */
+.scrollable-content::-webkit-scrollbar {
+    width: 8px;
+    /* Chiều rộng của thanh cuộn dọc */
+    height: 8px;
+    /* Chiều cao của thanh cuộn ngang */
 }
 
-.dot {
-  height: 12px;
-  width: 12px;
-  margin-right: 10px;
-  border-radius: 10px;
-  background-color: #fff;
-  animation: pulse 1.5s infinite ease-in-out;
+/* Tùy chỉnh đường dẫn của thanh cuộn */
+.scrollable-content::-webkit-scrollbar-track {
+    background: #fffbfb;
+    /* Màu nền của đường dẫn thanh cuộn */
+    border-radius: 10px;
+    /* Bo tròn các góc của đường dẫn */
 }
 
-.dot:last-child {
-  margin-right: 0;
+/* Tùy chỉnh thanh cuộn */
+.scrollable-content::-webkit-scrollbar-thumb {
+    background: #b4b3b3;
+    /* Màu của thanh cuộn */
+    border-radius: 10px;
+    /* Bo tròn các góc của thanh cuộn */
 }
 
-.dot:nth-child(1) {
-  animation-delay: -0.3s;
+/* Tùy chỉnh khi di chuột qua thanh cuộn */
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+    background: #929292;
+    /* Màu của thanh cuộn khi di chuột qua */
 }
 
-.dot:nth-child(2) {
-  animation-delay: -0.1s;
+/* Ẩn thanh cuộn */
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
 }
 
-.dot:nth-child(3) {
-  animation-delay: 0.1s;
+.scrollbar-hidden {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(0.8);
-    background-color: #b3d4fc;
-    box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7);
-  }
-
-  50% {
-    transform: scale(1.2);
-    background-color: #4b79e4;
-    box-shadow: 0 0 0 10px rgba(178, 212, 252, 0);
-  }
-
-  100% {
-    transform: scale(0.8);
-    background-color: #2584f8;
-    box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7);
-  }
+.sidebar::-webkit-scrollbar {
+    display: none;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
 }
 
 @layer base {
-  :root {
-    --color-bg: 227 227 227;
-    --color-primary: 255 255 255;
-    --color-secondary:255 255 255;
-    --color-ascent1: 0 0 0;
-    --color-ascent2: 89 91 100;
-    --color-blue: 6 90 216;
-    --color-white: 255 255 255;
+    :root {
+        --color-bg: 227 227 227;
+        --color-primary: 255 255 255;
+        --color-secondary: 255 255 255;
+        --color-ascent1: 0 0 0;
+        --color-ascent2: 89 91 100;
+        --color-blue: 6 90 216;
+        --color-white: 255 255 255;
 
-  }
-  /* //15 23 42  21 30 49*/
-  [data-theme="dark"] {
-     --color-bg: 12 12 12;
-     --color-primary: 31 31 31;
-    --color-secondary: 47 45 48;
-    --color-ascent1: 255 255 255;
-    --color-ascent2: 164 161 162;
-    --color-blue: 6 90 216;
-    /* //16 176 255; */
-    --color-white: 255 255 255;
-  }
+    }
+
+    /* //15 23 42  21 30 49*/
+    [data-theme="dark"] {
+        --color-bg: 12 12 12;
+        --color-primary: 31 31 31;
+        --color-secondary: 47 45 48;
+        --color-ascent1: 255 255 255;
+        --color-ascent2: 164 161 162;
+        --color-blue: 6 90 216;
+        /* //16 176 255; */
+        --color-white: 255 255 255;
+    }
 }

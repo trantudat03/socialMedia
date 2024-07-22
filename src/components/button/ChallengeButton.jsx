@@ -7,7 +7,7 @@ const ChallengeButton = ({ onClick }) => {
 
   return (
     <button className="w-full h-full">
-      <RiSwordLine className="w-full h-full text-2xl text-blue text-opacity-70 hover:text-blue" />
+      <RiSwordLine className="w-full h-full text-3xl text-blue text-opacity-70 hover:text-blue" />
     </button>
   );
 };

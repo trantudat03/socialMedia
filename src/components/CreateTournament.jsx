@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdClose } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import TextInput from "./TextInput";
-import Loading from "./Loading";
-import CustomButton from "./CustomButton";
+import { TextInput, Loading, CustomButton } from "../index";
 import { UpdateProfile } from "../redux/userSlice";
 import { BiImage, BiImages } from "react-icons/bi";
 

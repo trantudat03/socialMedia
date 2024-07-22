@@ -6,8 +6,8 @@ import { TbBrandDatabricks, TbSocial } from "react-icons/tb";
 import { BsShare } from "react-icons/bs";
 import { AiOutlineInteraction } from "react-icons/ai";
 import { ImConnection } from "react-icons/im";
-import { TextInput, Loading, CustomButton } from "../components";
-import { BgImage } from "../assets";
+import { TextInput, Loading, CustomButton } from "../../components/index";
+import { BgImage } from "../../assets";
 import axios from "axios";
 const Register = () => {
   const {

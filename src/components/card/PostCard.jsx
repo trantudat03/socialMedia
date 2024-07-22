@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { NoProfile } from "../assets";
+import { NoProfile } from "../../assets";
 import moment from "moment";
+import "moment/locale/vi";
 import { BiSolidLike, BiLike, BiComment } from "react-icons/bi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useForm } from "react-hook-form";
-import { TextInput, Loading, CustomButton } from "../components";
-// import { postComments } from "../assets/data";
+import { TextInput, Loading, CustomButton } from "../index";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
-const ReplyCard = ({ reply, user, handleLike }) => {
+const ReplyCard = ({ reply, handleLike }) => {
+  const { user } = useSelector((state) => state.auth);
+  const [myUser, setMyUser] = useState({});
+
+  useEffect(() => {
+    // console.log(user);
+    if (user) {
+      setMyUser(user);
+    }
+  }, [user]);
   return (
     <div className="w-full py-3">
       <div className="flex gap-3 items-center mb-1">
@@ -38,7 +48,7 @@ const ReplyCard = ({ reply, user, handleLike }) => {
             className="flex gap-2 items-center text-base text-ascent-2 cursor-pointer"
             onClick={handleLike}
           >
-            {reply?.likes?.includes(user?._id) ? (
+            {reply?.likes?.includes(myUser?._id) ? (
               <BiSolidLike size={20} color="blue" />
             ) : (
               <BiLike size={20} />
@@ -50,9 +60,18 @@ const ReplyCard = ({ reply, user, handleLike }) => {
     </div>
   );
 };
-const CommentForm = ({ user, id, replyAt, getComments }) => {
+const CommentForm = ({ id, replyAt, getComments }) => {
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+  const { user } = useSelector((state) => state.auth);
+  const [myUser, setMyUser] = useState({});
+
+  useEffect(() => {
+    // console.log(user);
+    if (user) {
+      setMyUser(user);
+    }
+  }, [user]);
   const {
     register,
     handleSubmit,
@@ -62,8 +81,8 @@ const CommentForm = ({ user, id, replyAt, getComments }) => {
     mode: "onChange",
   });
   const onSubmit = async (data) => {
-    const name = user.firstName + +user.lastName;
-    console.log(user);
+    const name = myUser?.firstName + +myUser?.lastName;
+    // console.log(myUser);
     // console.log(data);
     if (replyAt) {
       axios
@@ -100,7 +119,7 @@ const CommentForm = ({ user, id, replyAt, getComments }) => {
     >
       <div className="w-full flex items-center gap-2 py-4">
         <img
-          src={user?.profileUrl ?? NoProfile}
+          src={myUser?.profileUrl ?? NoProfile}
           alt="UerImage"
           className="w-10 h-10 rounded-full object-cover"
         />
@@ -143,15 +162,24 @@ const CommentForm = ({ user, id, replyAt, getComments }) => {
   );
 };
 
-const PostCart = ({ post, user, deletePost, likePost }) => {
+const PostCard = ({ post, deletePost, likePost, handDetail }) => {
   const [showAll, setShowAll] = useState(0);
   const [showReply, setShowReply] = useState([]);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [replyComments, setReplyComments] = useState(0);
   const [showComments, setShowComments] = useState(0);
-  const [cmtLength, setCmtLength] = useState(post?.comments.length);
+  const [cmtLength, setCmtLength] = useState(post?.comments?.length);
   const [likes, setLikes] = useState(post?.likes);
+  const { user } = useSelector((state) => state.auth);
+  const [myUser, setMyUser] = useState({});
+
+  useEffect(() => {
+    // console.log(user);
+    if (user) {
+      setMyUser(user);
+    }
+  }, [user]);
   const getComments = async (id) => {
     setReplyComments(0);
     // if (showReply.indexOf(id) === -1) {
@@ -201,7 +229,7 @@ const PostCart = ({ post, user, deletePost, likePost }) => {
   };
 
   return (
-    <div className="mb-2 bg-primary p-4 rounded-xl">
+    <div className="mb-2 bg-white p-4 rounded-xl shadow-lg w-full">
       <div className="flex gap-3 items-center mb-2">
         <Link to={"/profile/" + post?.userId?._id}>
           <img
@@ -226,7 +254,9 @@ const PostCart = ({ post, user, deletePost, likePost }) => {
           </div>
 
           <span className="text-ascent-2">
-            {moment(post?.createdAt ?? "2023-05-25").fromNow()}
+            {moment(post?.createdAt ?? "error")
+              .locale("vi")
+              .fromNow()}
           </span>
         </div>
       </div>
@@ -235,7 +265,7 @@ const PostCart = ({ post, user, deletePost, likePost }) => {
         <p className="text-ascent-2">
           {showAll === post?._id
             ? post?.description
-            : post.description.slice(0, 300)}
+            : post?.description?.slice(0, 300)}
           {post?.description?.length > 301 &&
             (showAll === post?._id ? (
               <span
@@ -268,7 +298,7 @@ const PostCart = ({ post, user, deletePost, likePost }) => {
           className="flex gap-2 items-center text-base cursor-pointer"
           onClick={() => handleLikePost(post)}
         >
-          {likes?.includes(user?._id) ? (
+          {likes?.includes(myUser?._id) ? (
             <BiSolidLike size={20} color="blue" />
           ) : (
             <BiLike size={20} />
@@ -278,30 +308,32 @@ const PostCart = ({ post, user, deletePost, likePost }) => {
 
         <p
           className="flex gap-2 items-center text-base cursor-pointer"
+          //   onClick={() => {
+          //     setShowComments(showComments === post._id ? null : post._id);
+          //     getComments(post?._id);
+          //   }}
           onClick={() => {
-            setShowComments(showComments === post._id ? null : post._id);
-            getComments(post?._id);
+            handDetail(post);
           }}
         >
           <BiComment size={20} />
           {cmtLength} Comments
         </p>
 
-        {user?._id === post?.userId?._id && (
+        {/* {user?._id === post?.userId?._id && (
           <div
             className="flex gap-1 items-center text-base text-ascent-1 cursor-pointer"
             onClick={() => deletePost(post?._id)}
           >
             <MdOutlineDeleteOutline size={20} />
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Comments */}
       {showComments === post?._id && (
         <div className="w-full mt-4 border-t border-[#66666645] pt-4">
           <CommentForm
-            user={user}
             id={post?._id}
             getComments={() => getComments(post?._id)}
           />
@@ -335,7 +367,7 @@ const PostCart = ({ post, user, deletePost, likePost }) => {
                   <p className="text-ascent-2">{comment?.comment}</p>
                   <div className="mt-2 flex gap-6">
                     <p className="flex gap-2 items-center text-base text-ascent-2 cursor-pointer">
-                      {comment?.likes?.includes(user?._id) ? (
+                      {comment?.likes?.includes(myUser?._id) ? (
                         <BiSolidLike size={20} color="blue" />
                       ) : (
                         <BiLike size={20} />
@@ -351,7 +383,6 @@ const PostCart = ({ post, user, deletePost, likePost }) => {
                   </div>
                   {replyComments === comment?._id && (
                     <CommentForm
-                      user={user}
                       id={comment?._id}
                       replyAt={comment?.from}
                       getComments={() => getComments(comment?._id)}
@@ -373,7 +404,6 @@ const PostCart = ({ post, user, deletePost, likePost }) => {
                     comment?.replies?.map((reply) => (
                       <ReplyCard
                         reply={reply}
-                        user={user}
                         key={reply?._id}
                         handleLike={() =>
                           handleLike(
@@ -398,4 +428,4 @@ const PostCart = ({ post, user, deletePost, likePost }) => {
     </div>
   );
 };
-export default PostCart;
+export default PostCard;

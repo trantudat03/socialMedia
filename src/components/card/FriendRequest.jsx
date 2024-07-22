@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import CustomButton from "./CustomButton";
+import { CustomButton } from "../index";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { NoProfile } from "../assets";
-import { RiSwordLine } from "react-icons/ri";
-const ChallengeList = ({ user }) => {
+import { NoProfile } from "../../assets";
+import { FaUserFriends } from "react-icons/fa";
+
+const FriendRequest = ({ user }) => {
   const [request, setRequest] = useState([]);
 
   useEffect(() => {
     axios
-      .get("/challengeRequest")
+      .get("/getFriendRequest")
       .then((res) => {
         setRequest(res.data.data);
-        // console.log(res.data.data);
       })
       .catch(() => {
         console.log("error");
@@ -22,9 +22,9 @@ const ChallengeList = ({ user }) => {
   const handAccept = (rid) => {
     // console.log(rid);
     axios
-      .post("/acceptChallenge", { rid, status: "Accepted" })
+      .post("/acceptRequest", { rid, status: "Accepted" })
       .then((res) => {
-        // console.log("helep");
+        console.log("helep");
         setRequest(request.filter((r) => r._id !== rid));
       })
       .catch(() => {
@@ -34,7 +34,7 @@ const ChallengeList = ({ user }) => {
   const handDelete = (id) => {
     if (id) {
       axios
-        .delete(`/challengeRequest/${id}`)
+        .delete(`/friendRequest/${id}`)
         .then((res) => {
           setRequest(request.filter((r) => r._id !== id));
         })
@@ -42,23 +42,27 @@ const ChallengeList = ({ user }) => {
           console.log("error");
         });
     }
-
-    // console.log(r);
   };
   //   console.log(request);
 
   return (
-    <div className="w-full bg-primary shadow-sm rounded-lg px-4 pt-5 ">
+    <div className="w-full bg-primary shadow-sm rounded-lg px-4 pt-5">
       <div className="flex items-center justify-between text-xl text-ascent-1 pb-2 border-b border-[#66666645] ">
-        <span className="">
-          <RiSwordLine className="inline items-center mr-3 text-blue" />
-          Lời mời giao lưu{" "}
+        <span>
+          {" "}
+          <FaUserFriends className="inline items-center mr-3 text-blue" />
+          Lời mời kết bạn
         </span>
         <span>{request?.length}</span>
       </div>
-      <div className="w-full flex flex-col gap-4 pt-4 mb-5">
+      <div className="w-full flex flex-col gap-4 pt-4">
+        {request?.length === 0 && (
+          <div className="w-full text-center mb-5 text-xl text-[#9b9898]">
+            <span>Không có lời mời kết bạn</span>
+          </div>
+        )}
         {request?.map(({ _id, requestFrom: from }) => (
-          <div key={_id} className="flex justify-between items-center">
+          <div key={_id} className="flex items-center justify-between">
             <Link
               to={"/profile/" + from._id}
               className="w-full flex gap-4 items-center cursor-pointer"
@@ -70,7 +74,7 @@ const ChallengeList = ({ user }) => {
                     : NoProfile
                 }
                 alt={from?.firstName}
-                className="w-16 h-16 object-cover rounded-full"
+                className="w-10 h-10 object-cover rounded-full"
               />
               <div className="flex-1">
                 <p className="text-base font-medium text-ascent-1">
@@ -82,29 +86,19 @@ const ChallengeList = ({ user }) => {
               </div>
             </Link>
 
-            <div className="flex gap-1 flex-col ">
-              {/* <CustomButton
-                title="Chấp nhận"
+            <div className="flex gap-1 ">
+              <CustomButton
+                title="Xác nhận"
                 onClick={() => handAccept(_id)}
-                containerStyles="bg-[#0444a4] text-xs text-white rounded-2xl min-w-20 pl-1.5 py-1 text-center items-center"
+                containerStyles="bg-[#0444a4] text-xs text-white rounded-2xl min-w-16 pl-1.5 py-1 text-center items-center"
               />
               <CustomButton
-                title="Từ chối"
-                onClick={handDelete}
+                title="Xóa"
+                onClick={() => {
+                  handDelete(_id);
+                }}
                 containerStyles="border border-[#666] text-xs  px-1.5 rounded-xl"
-              /> */}
-              <button
-                onClick={() => handAccept(_id)}
-                className="bg-[#0444a4] border-[#0444a4] border text-white rounded-2xl min-w-20  py-1 text-xs text-center "
-              >
-                Chấp nhận
-              </button>
-              <button
-                onClick={() => handDelete(_id)}
-                className="border-[#666] border rounded-2xl min-w-20  py-1 text-xs text-center "
-              >
-                Từ chối
-              </button>
+              />
             </div>
           </div>
         ))}
@@ -114,4 +108,4 @@ const ChallengeList = ({ user }) => {
   );
 };
 
-export default ChallengeList;
+export default FriendRequest;
